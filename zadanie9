@@ -1,237 +1,230 @@
 using System;
 using System.Collections.Generic;
-namespace 
+using System.Linq;
+using System.Text;
+using System.Collections;
+using System.IO;
+
+namespace FirstEnum
 {
-    public class Student
+    class Program
     {
-
-        public string Id;
-        public string Fio;
-        public string Group;
-        public int Vozrast;
-        public string Data_Rozhdeniya;
-        public List <Student> list = new List <Student>();
-        public void AddId(string id)
+        public class Student
         {
-            Id = id;
-        }
-        public void AddName(string f)
-        {
-            Fio = f;
-        }
-
-        public void AddData(string d)
-        {
-            Data_Rozhdeniya = d;
-        }
-        public void AddVozrast(int v)
-        {
-            Vozrast = v;
-        }
-
-        public void AddGroup(string g)
-        {
-            Group = g;
-        }
-        public void addStudent(Student st)
-        {
-            list.Add(st);
-        }
-        public void Show()
-        {
-            foreach (var student in list)
+            public int Age { get; set; }
+            public string Data_Rozhdeniya { get; set; }
+            public string FIO { get; set; }
+            public string Gruppa { get; set; }
+            public override string ToString()
             {
-                Console.WriteLine(student);
+
+                return string.Format("ФИО:{0},Группа:{1}, Возраст:{2}", FIO, Gruppa, Age);
             }
         }
-        public void Add()
-        {
-            int control;
-            control = Convert.ToInt32(Console.ReadLine());
-            switch (control)
-            {
 
-                case 1:
-                    Student st = new Student();
-                    Console.WriteLine("Введите id:");
-                    st.AddId(Console.ReadLine());
-                    Console.WriteLine("Введите фио:");
-                    st.AddName(Console.ReadLine());
-                    Console.WriteLine("Введите дату рождения:");
-                    st.AddData(Console.ReadLine());
-                    Console.WriteLine("Введите возраст:");
-                    st.AddVozrast(Console.Read());
-                    Console.WriteLine("Введите группу:");
-                    st.AddGroup(Console.ReadLine());
-                    addStudent(st);
+        static void Main(string[] args)
+        {
+            bool kones = true;
+            ArrayList al = new ArrayList();
+
+            while (kones)
+            {
+                Console.WriteLine("Главное меню");
+                PrintMessage();
+                int a = int.Parse(Console.ReadLine());
+                if (a == 1)
+                {
+                    AddNewStudent(al);
+                }
+                else if (a == 2)
+                {
+                    PrintAllStudent(al);
+                }
+                else if (a == 3)
+
+                    FindStudent(al);
+
+                else if (a == 4)
+                {
+                    RemoveStudent(al);
+                }
+                else if (a == 5)
+                {
+                    LoadStudent(al);
+                }
+                else if (a == 8)
+                {
+                    SaveToFiles(al);
+                }
+                else kones = false;
+            }
+
+        }
+
+        private static void FindStudent(ArrayList al)
+        {
+            bool end = true;
+
+            while (end)
+            {
+                Console.WriteLine("Поиск студента по З-м методам");
+                PrintFindMessage();
+                int b = int.Parse(Console.ReadLine());
+                if (b == 1)
+                {
+                    FindFioStudent(al);
+                }
+                if (b == 2)
+                {
+                    FindGruppaStudent(al);
+                }
+                if (b == 3)
+                {
+                    FindAgeStudent(al);
+                }
+                else end = false;
+
+            }
+            //FindStudent(al);
+        }
+
+        private static void SaveToFiles(ArrayList al)
+        {
+            DirectoryInfo di = new DirectoryInfo("Data");
+            di.Create();
+            StreamWriter sw = File.CreateText(@"Data\student.txt");
+            foreach (var item in al)
+            {
+                Student st = (Student)item;
+                sw.WriteLine(st.ToString());
+            }
+            sw.Close();
+        }
+
+        private static void RemoveStudent(ArrayList al)
+        {
+            Console.WriteLine("Введите фамилию:");
+            string findFIO = Console.ReadLine();
+            bool fd = false;
+            Student findSt = new Student();
+            foreach (var item in al)
+            {
+                Student st = (Student)item;
+                if (findFIO == st.FIO)
+                {
+                    findSt = st;
+                    al.Remove(st);
+                    fd = true;
                     break;
-                case 2:
-                    Show();
+                }
+            }
+            if (fd) { Console.WriteLine(findSt.ToString()); }
+            else { Console.WriteLine("Студент не найден"); }
+        }
+        private static void FindFioStudent(ArrayList al)
+        {
+            Console.WriteLine("Введите фамилию:");
+            string findFIO = Console.ReadLine();
+            bool fd = false;
+            Student findSt = new Student();
+            foreach (var item in al)
+            {
+                Student st = (Student)item;
+                if (findFIO == st.FIO)
+                {
+                    findSt = st;
+                    fd = true;
                     break;
-                default:
+                }
+            }
+            if (fd) { Console.WriteLine(findSt.ToString()); }
+            else { Console.WriteLine("Студент не найден"); }
+        }
+        private static void FindGruppaStudent(ArrayList al)
+        {
+            Console.WriteLine("Введите группу студента:");
+            string findGruppa = Console.ReadLine();
+            bool fd = false;
+            Student findSt = new Student();
+            foreach (var item in al)
+            {
+                Student st = (Student)item;
+                if (findGruppa == st.Gruppa)
+                {
+                    findSt = st;
+                    fd = true;
                     break;
+                }
             }
-            Console.ReadLine();
+            if (fd) { Console.WriteLine(findSt.ToString()); }
+            else { Console.WriteLine("группа студента не найдена"); }
         }
-        public void del(string id)
+        private static void FindAgeStudent(ArrayList al)
         {
+            Console.WriteLine("Введите группу студента:");
+            int findAge;
+            findAge = int.Parse(Console.ReadLine());
+            bool fd = false;
+            Student findSt = new Student();
+            foreach (var item in al)
+            {
+                Student st = (Student)item;
+                if (findAge == st.Age)
+                {
+                    findSt = st;
+                    fd = true;
+                    break;
+                }
+            }
+            if (fd) { Console.WriteLine(findSt.ToString()); }
+            else { Console.WriteLine("группа студента не найдена"); }
+        }
 
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i].Id == id) list.RemoveAt(i); // Console.WriteLine(i.id);
-            }
-        }
-        public void izmenie(string id, string fio, string data_r, int vozrast, string group)
+        private static void PrintMessage()
         {
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i].Id == id)
-                {
-                    list[i].Fio = fio;
-                    list[i].Data_Rozhdeniya = data_r;
-                    list[i].Vozrast = vozrast;
-                    list[i].Group = group;
-                }
+            Console.WriteLine("Для добавления студента нажмите на 1");
+            Console.WriteLine("Для получения списка нажмите на 2");
+            Console.WriteLine("Для поиска студента нажмите на 3");
+            Console.WriteLine("Для удаления студента нажмите на 4");
+            Console.WriteLine("Для загрузки студентов нажмите на 5");
+            Console.WriteLine("Для сохранения нажмите на 8");
+            Console.WriteLine("Для выхода из приложения на 9");
+        }
+        private static void PrintFindMessage()
+        {
+            Console.WriteLine("Поиск по фамилии нажмите на 1");
+            Console.WriteLine("Поиск по группам нажмите на 2");
+            Console.WriteLine("Поиск по возрастам нажмите на 3");
+            Console.WriteLine("Для выхода на главное меню нажмите на 9");
 
-            }
         }
-        public void show()
-        {
 
-            foreach (var i in list)
+        private static void PrintAllStudent(ArrayList al)
+        {
+            foreach (var item in al)
             {
-                Console.WriteLine(i.Id + " " + i.Fio + "" + i.Data_Rozhdeniya + "" + i.Vozrast + "" + i.Group);
+                Student p = (Student)item;
+                Console.WriteLine(p.ToString());
             }
         }
-        public void find_id()
-        {
-            Console.WriteLine("id :");
-            string a = Console.ReadLine();
-            bool ft = false;
-            foreach (var i in list)
-            {
-                Student st = new Student();
-                if (a == i.Id)
-                {
-                    list.Add(st);
-                    ft = true;
-                }
-            }
-            if (!ft)
-            {
-                Console.WriteLine("Ошибка");
-                return;
-            }
-            foreach (var i in list)
-            {
-                Console.WriteLine(i.ToString());
-            }
-        }
-        public int S
-        {
-            set
-            {
-                if (value < 18)
-                {
-                    Console.WriteLine("Возраст должен быть < 17");
-                }
-                else
-                {
-                    Vozrast = value;
-                }
-            }
-            get { return Vozrast; }
-        }
-        public int A
-        {
-            set
-            {
-                if (value > 18)
-                {
-                    Console.WriteLine("Возраст должен быть > 17");
-                }
-                else
-                {
-                    Vozrast = value;
-                }
-            }
-            get { return Vozrast; }
-        }
-        public void vozras_s()
-        {
-            Console.WriteLine("Введите возраст:");
-            int i = Console.Read();
-            bool ft = false;
-            foreach (var student in list)
-            {
-                Student st = new Student();
-                if (i == st.S)
-                {
-                    list.Add(st);
-                    ft = true;
-                }
-            }
-            if (!ft)
-            {
-                Console.WriteLine("Ошибка");
-                return;
 
-            }
-            foreach (var student in list)
-            {
-                Console.WriteLine(student.ToString());
-            }
-        }
-        public void vozrast_a()
+        private static void AddNewStudent(ArrayList al)
         {
-            Console.WriteLine("Введите возраст:");
-            int i = Console.Read();
-            bool ft = false;
-            foreach (var student in list)
-            {
-                Student st = new Student();
-                if (i == st.A)
-                {
-                    list.Add(st);
-                    ft = true;
-                }
-            }
-            if (!ft)
-            {
-                Console.WriteLine("Ошибка");
-                return;
-
-            }
-            foreach (var student in list)
-            {
-                Console.WriteLine(student.ToString());
-            }
+            string fio; int age; string gruppa;
+            Console.WriteLine("Введите пожалуйста фио студента");
+            fio = Console.ReadLine();
+            Console.WriteLine("Возраст:");
+            age = int.Parse(Console.ReadLine());
+            Console.WriteLine("Группа:");
+            gruppa = Console.ReadLine();
+            al.Add(new Student { Age = age, FIO = fio, Gruppa = gruppa });
         }
-        public void Phoisk()
-        {
-            Console.WriteLine("Введите ФИО:");
-            string i = Console.ReadLine();
-            bool ft = false;
-            foreach (var student in list)
-            {
-                Student st = (Student)student;
-                if (i == st.Fio)
-                {
-                    list.Add(st);
-                    ft = true;
-                }
-            }
-            if (!ft)
-            {
-                Console.WriteLine("Ошибка");
-                return;
 
-            }
-            foreach (var student in list)
-            {
-                Console.WriteLine(student.ToString());
-            }
+        private static void LoadStudent(ArrayList al)
+        {
+            al.Add(new Student { Age = 19, Fio ="Лахтина Екатерина Станиславовна", Data_Rozhdeniya = "28.02.2002", Group = "  ИСиП 19-11-2" });
+            al.Add(new Student { Age = 25, Fio = "Мясникова Альбина Сергеевна", Data_Rozhdeniya = "21.11.2001", Group = "  ИСиП 19-11-2" });
+            al.Add(new Student { Age = 18, FIO = "Горлатова Людмила Евгеньевна", Data_Rozhdeniya = "11.04.2001", Gruppa = "  ИСиП 19-11-2" });
         }
     }
 }
-    
